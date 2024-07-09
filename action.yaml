@@ -1,0 +1,50 @@
+name: "Generate FHIR profiles"
+description: "Generate FHIR profiles using FSH Sushi"
+inputs:
+  project-dir:
+    description: "Root directory of the FSH Sushi project"
+    required: false
+    default: "."
+  sushi-version:
+    description: "Version of FSH sushi for building"
+    required: true
+  firely-terminal-version:
+    description: "Version of Firely Terminal"
+    required: true
+  node-version:
+    description: Version of NodeJS
+    required: false
+    default: lts/*
+  dotnet-version:
+    description: Version of .NET
+    required: false
+    default: 6.0.x
+runs:
+  using: composite
+  steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Setup Sushi
+        run: npm install -g fsh-sushi@${{ inputs.sushi-version }}
+        shell: bash
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Install Firely Terminal
+        run: dotnet tool install --global Firely.Terminal --version ${{ inputs.firely-terminal-version }}
+        shell: bash
+
+      - name: Get all FHIR packages
+        run: fhir restore && git checkout HEAD  -- fhirpkg.lock.json
+        shell: bash
+        working-directory: ${{ inputs.project-dir }}
+
+      - name: Build profiles
+        run: sushi .
+        shell: bash
+        working-directory: ${{ inputs.project-dir }}
