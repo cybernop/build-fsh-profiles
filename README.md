@@ -1,5 +1,7 @@
 # github Action "build-fsh-profiles"
 
+This action was merged into https://github.com/cybernop/build-fhir-profiles. This repository will not be maintained any further.
+
 This github action builds FHIR profiles using FSH Sushi and Firely Terminal. The Firely Terminal is used to download and inflate the project dependencies before building the JSON files using FSH Sushi.
 
 ## Parameters
